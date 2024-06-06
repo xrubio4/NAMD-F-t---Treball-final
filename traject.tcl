@@ -5,7 +5,7 @@ set resid 3113
 
 set numframes [molinfo top get numframes]
 
-set outfile [open "$current_dir/residue_trajectory.txt" w]
+set outfile [open "$current_dir/nom_arxiu.txt" w]
 
 for {set i 0} {$i < $numframes} {incr i} {
     set sel [atomselect top "resid $resid" frame $i]

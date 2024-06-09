@@ -1,6 +1,6 @@
 import numpy as np
 
-def timestep(arxiu): #Abans de simular cal crear un arxiu que l'unic que tingui escrit és un 0
+def tsimul(arxiu): #Abans de simular cal crear un arxiu que l'unic que tingui escrit és un 0
     with open(arxiu, "r") as r: #Cada vegada que NAMD vulgui calcular forçes, pensa obrir l'arxiu
         t0 = float(r.readlines()[0]) #Llegir el valor de temps anterior
     t = t0 +1e-3 #L'hi suma 1 per a indicar que estem al següent pas de temps
@@ -8,9 +8,7 @@ def timestep(arxiu): #Abans de simular cal crear un arxiu que l'unic que tingui 
         w.write(str(t)) #Pero ara escribim el nou valor de temps
     return t #I obtenim el valor de temps actual amb el que volem simular la F
 
-def calculate_forces(coords,t):
-    max_z = max(atom[3] for atom in coords)
-    min_z = min(atom[3] for atom in coords)
+def calcular_forces(coords,t):
     forces = []
     for atom in coords:
         if atom[0] >=577 and atom[0]<=2160: #Si l'atom forma part d'un aigua s'applica força, si no es aigua, no aplicar força
@@ -31,7 +29,7 @@ def calculate_forces(coords,t):
             forces.append([atom[0], 1, fx, fy, fz])
     return forces
 
-def read_coords(arxiu):
+def llegir_coords(arxiu):
     with open(arxiu, 'r') as r:
         lines = r.readlines()
     coords = []
@@ -42,14 +40,15 @@ def read_coords(arxiu):
         coords.append([atomid, x, y, z])
     return coords
 
-def write_forces(arxiu, forces):
+def arxiu_forces(arxiu, forces):
     with open(arxiu, 'w') as w:
         for force in forces:
             w.write(f"{force[0]} {force[1]} {force[2]} {force[3]} {force[4]}\n") #force[0] = atomID, force[1] = replace force[2,3,4] = fx,fy,fz
-        w.write("0.0\n")  # Energía?????? que he d'escriure?
+        w.write("0.0\n")  # Energía d'interacció
 
-t = timestep("tmp/temps.dat")
-coords = read_coords("tmp/coords.dat")
-forces = calculate_forces(coords,t)
-write_forces("tmp/forces.dat",forces)
+t = tsimul("tmp/temps.dat")
+coords = llegir_coords("tmp/coords.dat")
+forces = calcular_forces(coords,t)
+arxiu_forces("tmp/forces.dat",forces)
+
 
